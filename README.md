@@ -1,6 +1,7 @@
------------
+Note: This is the README for the Prep Week 3 Code, not the Week 1 code.
+-
 MINESWEEPER
------------
+-
 Original Game made by Curt Johnson and Robert Donner in 1990
 
 How To Play:
