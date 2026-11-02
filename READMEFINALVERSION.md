@@ -1,8 +1,8 @@
 Note: This is the README for WEEK 2, not for Prep Week 3 nor Week 1.
+-
 
 <img width="164" height="164" alt="Screenshot 2026-11-01 at 9 40 13 PM" src="https://github.com/user-attachments/assets/bce3fc37-d382-4b09-ba9c-a9e3ebbae880" />
 
--
 MINESWEEPER VARIANTS
 -
 Original Game made by Curt Johnson and Robert Donner in 1990
