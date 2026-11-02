@@ -45,15 +45,15 @@ triplenegscount = 0
 sqrtscount = 0
 megascount = 0
 
-wsingles = 0
-wdoubles = 0
-wtriples = 0
-wnegs = 0
-wdoublenegs = 0
-wtripnegs = 0
-wmegas = 0
-wsqrts = 0
-whalfs = 0
+wsingles = 5
+wdoubles = 5
+wtriples = 5
+wnegs = 5
+wdoublenegs = 5
+wtripnegs = 5
+wmegas = 5
+wsqrts = 5
+whalfs = 5
 
 variationStrings = ["normal", "double", "triple", "negative", "doubleneg", "tripneg", "mega", "sqrt", "half"]
 VALUES = {"normal": 1, "double": 2, "triple": 3,
@@ -394,9 +394,26 @@ def place_mines(safe_index):
     safe = set(neighbors(safe_index)) | {safe_index}
     megasafe = set(meganeighbors(safe_index)) | {safe_index}
 
+    VARTOSTRING = {"normal": wsingles, "double": wdoubles, "triple": wtriples,
+          "negative": wnegs, "doubleneg": wdoublenegs, "tripneg": wtripnegs,
+          "mega": wmegas, "sqrt": wsqrts, "half": whalfs}
+
     allowed = get_allowed()
     nonmega = [a for a in allowed if a != "mega"]
+    w_allowed = []
+    for i in range(len(allowed)):
+        w_allowed.append(VARTOSTRING[allowed[i]])
+    superallowed = []
 
+    iteration = 0
+    for i in w_allowed:
+        while i > 0:
+            superallowed.append(allowed[iteration])
+            i-=1
+        iteration+=1
+
+    supernonmega = [a for a in superallowed if a != "mega"]
+    print(superallowed)
 
     # megas only: keep every mine out of the 5x5 zone around the first click
     if nonmega:
@@ -410,9 +427,9 @@ def place_mines(safe_index):
     for i in random.sample(candidates, count):
         buttons[i].is_mine = True
         if i in megasafe and nonmega:
-            buttons[i].mineVar = random.choice(nonmega)
+            buttons[i].mineVar = random.choice(supernonmega)
         else:
-            buttons[i].mineVar = random.choice(allowed)
+            buttons[i].mineVar = random.choice(superallowed)
 
     mines = sum(VALUES[b.mineVar] for b in buttons if b.is_mine) \
         - sum(VALUES[b.flagged] for b in buttons if b.flagged)
@@ -428,16 +445,41 @@ def get_flag_total(var):
             placed += 1
     return str(total-placed) + "/" + str(total)
 
-def update_weight_label(text):
+def w1(value):
+    global wsingles
+    wsingles = value
+def w2(value):
+    global wdoubles
+    wdoubles = value
+def w3(value):
+    global wtriples
+    wtriples = value
+def wneg(value):
+    global wnegs
+    wnegs = value
+def w2neg(value):
+    global wdoublenegs
+    wdoublenegs = value
+def w3neg(value):
+    global wtripnegs
+    wtripnegs = value
+def wmega(value):
+    global wmegas
+    wmegas = value
+def wsqrt(value):
+    global wsqrts
+    wsqrts = value
+def whalf(value):
+    global whalfs
+    whalfs = value
+
+def update_weight_label():
     weights = [wsingles, wdoubles, wtriples, wnegs, wdoublenegs, wtripnegs, wmegas, wsqrts, whalfs]
     count = 0
-    flagsx = [950, 1100, 1250]
-    flagsy = [250,  300,  350]
-    print("hi")
+    flagsx = [880, 1030, 1180]
+    flagsy = [275,  325,  375]
     for i in flagsx:
         for j in flagsy:
-            print(count)
-            print(weights[count])
             drawSmallText(str(weights[count]),i,j)
             count+=1
 
@@ -631,7 +673,6 @@ def checked(box, flip):
             sqrts = True
         elif flip == 0.5:
             halfs = True
-            print("error3")
         else:
             print("error2")
 
@@ -688,15 +729,15 @@ halfbox = Checkbox(1100, 350,30,30,0.5,checked)
 timer = Checkbox(1100, 100, 30, 30, 0, timerState)
 checkboxes = [box1,box2,box3,negbox1,negbox2,negbox3,megabox,sqrtbox,halfbox,timer]
 
-slider1 = Slider(800,280,75,16,5,90,wsingles,update_weight_label)
-slider2 = Slider(800,330,75,16,5,90,wdoubles,update_weight_label)
-slider3 = Slider(800,380,75,16,5,90,wtriples,update_weight_label)
-negslider1 = Slider(950,280,75,16,5,90,wnegs,update_weight_label)
-negslider2 = Slider(950,330,75,16,5,90,wdoublenegs,update_weight_label)
-negslider3 = Slider(950,380,75,16,5,90,wtripnegs,update_weight_label)
-megaslider = Slider(1100,280,75,16,5,90,wmegas,update_weight_label)
-sqrtslider = Slider(1100,330,75,16,5,90,wsqrts,update_weight_label)
-halfslider = Slider(1100,380,75,16,5,90,whalfs,update_weight_label)
+slider1 = Slider(800,280,75,16,1,100,wsingles,w1)
+slider2 = Slider(800,330,75,16,1,100,wdoubles,w2)
+slider3 = Slider(800,380,75,16,1,100,wtriples,w3)
+negslider1 = Slider(950,280,75,16,1,100,wnegs,wneg)
+negslider2 = Slider(950,330,75,16,1,100,wdoublenegs,w2neg)
+negslider3 = Slider(950,380,75,16,1,100,wtripnegs,w3neg)
+megaslider = Slider(1100,280,75,16,1,100,wmegas,wmega)
+sqrtslider = Slider(1100,330,75,16,1,100,wsqrts,wsqrt)
+halfslider = Slider(1100,380,75,16,1,100,whalfs,whalf)
 slidermines = Slider(800, 625, 100, 16, 5, 90, mine_percentage, mineEnter)
 sliders = [slider1,slider2,slider3,negslider1,negslider2,negslider3,megaslider,sqrtslider,halfslider,slidermines]
 
@@ -726,8 +767,8 @@ while running:
     colsInput.draw(screen)
     for d in sliders:
         d.draw(screen)
-    # newGameButton.draw(screen)
 
+    update_weight_label()
     drawText("Rows:", 900, 475)
     drawText("Columns:", 900, 550)
     drawText("% Mines:", 920, 625)
